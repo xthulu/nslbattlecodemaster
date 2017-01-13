@@ -131,6 +131,6 @@ PS - Here is how to run the players on the command line.  I haven't had
 much luck with the client program.  This works on OSX. I think on linux
 it's ./gradle, and on Windows, maybe gradle.bat?
 
-./gradlew run -PteamA=nsl.players.nervous -PteamB=nsl.players.mitexample -Pmaps=shrine,SparseForest
+./gradlew run -PteamA=nslbattlecodemaster.players.nervous -PteamB=nslbattlecodemaster.players.mitexample -Pmaps=shrine,SparseForest
 
 

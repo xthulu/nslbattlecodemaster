@@ -1,6 +1,6 @@
-package nsl.players.scoutrush;
+package nslbattlecodemaster.players.scoutrush;
 import battlecode.common.*;
-import nsl.robots.*;
+import nslbattlecodemaster.robots.*;
 
 public strictfp class RobotPlayer {
 

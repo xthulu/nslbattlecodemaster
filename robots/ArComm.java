@@ -1,4 +1,4 @@
-package nsl.robots;
+package nslbattlecodemaster.robots;
 
 import battlecode.common.*;
 

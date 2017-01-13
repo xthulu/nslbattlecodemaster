@@ -1,15 +1,15 @@
-package nsl.robots;
+package nslbattlecodemaster.robots;
 
 import battlecode.common.*;
 
 /**
  * Created by morris on 1/11/17.
  */
-public strictfp class Tank extends NSLRobot {
+public strictfp class Scout extends NSLRobot {
 
-    public Tank(RobotController rc) {
+    public Scout(RobotController rc) {
         super(rc);
-        name = "Tank";
+        name = "Scout";
     }
 
     @SuppressWarnings("unused")

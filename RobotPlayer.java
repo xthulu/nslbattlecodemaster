@@ -1,4 +1,4 @@
-package nslmasterplayer;
+package nslbattlecodemaster;
 import battlecode.common.*;
 
 public strictfp class RobotPlayer {

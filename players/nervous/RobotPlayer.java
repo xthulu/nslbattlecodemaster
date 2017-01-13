@@ -1,7 +1,7 @@
-package nsl.players.nervous;
+package nslbattlecodemaster.players.nervous;
 
 import battlecode.common.*;
-import nsl.robots.*;
+import nslbattlecodemaster.robots.*;
 
 /* The nervous player doesn't build anything, other than a nervous archon
    bot that will twitch around the battlefield.
