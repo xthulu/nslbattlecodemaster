@@ -1,6 +1,6 @@
-package nsl.players.mitexample;
+package nslbattlecodemaster.players.mitexample;
 import battlecode.common.*;
-import nsl.robots.*;
+import nslbattlecodemaster.robots.*;
 
 public strictfp class RobotPlayer {
 
