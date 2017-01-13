@@ -1,0 +1,136 @@
+—————————————————————————
+INTRO
+
+Hi all, as described on the slack channel, I've taken a stab at
+breaking the project into separate files for the bots and players.
+This will let us develop without stepping on each others toes, and let
+us try out different AI strategies.
+
+In the src folder there is now an nsl folder which contains all of our
+stuff (and puts it in a nice nsl java package).
+
+There are 4 subfolders in nsl - ai, players, robots, and util.
+
+ai - this is intended to contain componentized ai code in the future.
+For now it’s empty.  I’ll write more on it later.
+
+players - this folder contains the code for the different players we
+develop and test.  Players are basically collections of AI.  I’ll
+write more about this below.
+
+robots - this folder contains the code for the different robots we
+build and test.  Each robot has a run() method that is executed once
+per turn.
+
+util - this is just a place for us to put utility code in the future. 
+
+—————————————————————————
+PLAYERS
+
+The players directory contains a directory for each player we build.
+Currently there are two examples:
+
+mitexample - this player behaves randomly just like the example that
+MIT provided, but structured to use our robot architecture.
+
+nervous - this player’s archons don’t do anything other than move
+around.  The intention is that this is a handy player to play against
+in early stages of developing player code.
+
+Any other players that we build would go in here as well.  For example
+I’ll soon start building a player that trys to do a scout rush at the
+enemy archons.  I’ll make a directory scoutrush, and copy in
+RobotPlayer.java from the mitexample player.  Modifying this file will
+define how the scoutrush player plays.
+
+Lets take a look at mitexample/RobotPlayer.java.
+
+First off, note that the package must match the filename and
+directory, so in this case it’s nsl.players.mitexample.  When I make
+scoutrush I will change it to nsl.players.scoutrush.
+
+The player code simply consists of a run() method.  This gets called
+by the game when a new robot is created.  The run() method's job is
+simply to create the right AI for the new robot, and call the AI’s
+start() method.
+
+In other words, defining a player is just a matter of defining which
+AIs it’s robots use.  In the case of the mitexample player, it just
+builds the default robots, because they contain the default random
+behavior provided by MIT.  The nervous player on the other hand does
+nothing but build nervous Archons (of class ARNervous).
+
+
+—————————————————————————
+ROBOTS
+
+The robots directory contains our robot AIs.  For now there is one
+class for each type of robot, plus ArNervous and NSLRobot.  I’ll soon
+be adding a scout AI that seeks out enemy Archons, broadcasts their
+location, shoots at them, and attempts to stay away from enemy robots.
+I’ll probably call it ScHunter.
+
+Before going into that, let’s look at the the other files in the
+robots directory.  First off, all the ones named after a default robot
+(Archon, Gardener, etc) just implement the random behavior MIT
+provided.  They are just there as examples and dumb enemies.
+
+ArNervous is the Archon AI that is Nervous.  All it does is move
+around randomly, without building anything.  Let’s take a look at it’s
+code, since it is the minimal AI.
+
+ArNervous extends Archon, that just makes it clear what role it
+serves.  Its constructor takes the RobotConroller passed
+in from the player, and sends it up to the superclass (Archon ->
+NSLRobot) to deal with.  Recall that the RobotController is basically
+our API to control and sense the robot.  The constructor then stores
+the name of the bot in a name field (provided by NSLRobot).  This
+would be a place for any other initialization to take place, for
+example we could set up an array to store the location of trees we see as
+we fly around.
+
+Most of the fun is in the bot’s run() method.  In this case all it
+does is try to move randomly.  BORING.  But there are some interesting
+things going on here.  First of all, note that the player called the
+AI’s start() method, not it’s run() method.  So how does run get
+called?  Also note that there is no need for the messy while() loops,
+or try/catch blocks, or clock.yield() found in the MIT example.
+That’s all taken care of for us elsewhere.
+
+Where?  I’m glad you asked.  It’s in NSLRobot, the superclass of all
+of our robots.
+
+NSLRobot’s constructor keeps track of our RobotController, our name
+(for debugging), and the enemy team.
+
+NSLRobot.start() logs the fact that our robot is starting, then calls
+our robot’s run() method inside of a while() loop, and try/catch
+block.  When our run() returns, NSLRobot.start() calls Clock.yield() and the loop
+starts again with another call to our robot's run().
+
+The bottom line is that
+
+1) Your player should call your AI’s start() method, NOT it’s run()
+method.
+
+2) Your AI doesn’t need to worry about looping and try/catch.
+
+3) You should NOT call Clock.yield().  Just return from your run()
+method.
+
+There is one more thing to discuss about NSLRobot.  The MIT example
+code contained a couple of useful utility routines (tryMove() etc).
+Currently they live in NSLRobot.  I think they should be moved out to
+the ai directory, but that’s a subject for later.
+
+Hopefully this is useful.  Let me know if you have questions.
+
+Harry
+
+PS - Here is how to run the players on the command line.  I haven't had
+much luck with the client program.  This works on OSX. I think on linux
+it's ./gradle, and on Windows, maybe gradle.bat?
+
+./gradlew run -PteamA=nsl.players.nervous -PteamB=nsl.players.mitexample -Pmaps=shrine,SparseForest
+
+
