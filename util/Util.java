@@ -1,4 +1,4 @@
-package nsl.util;
+package nslbattlecodemaster.util;
 
 import battlecode.common.*;
 

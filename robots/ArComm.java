@@ -1,6 +1,7 @@
 package nslbattlecodemaster.robots;
 
 import battlecode.common.*;
+import nslbattlecodemaster.util.CommChannel;
 
 import java.util.Map;
 
@@ -14,7 +15,7 @@ import java.util.Map;
  */
 public strictfp class ArComm extends Archon {
 
-    int gardenersBuilt = 0;
+    public CommChannel channel;
 
     public ArComm(RobotController rc) {
         super(rc);
@@ -23,35 +24,37 @@ public strictfp class ArComm extends Archon {
 
     public void run() throws GameActionException {
 
-        // XXX to start we're just going to build 2 gardeners as soon as possible
+        // initialize our comm channel if necessary
+        if (channel == null) {
+            // since we are only going to read from it, we don't need to assign a channel
+            channel = new CommChannel();
+        }
 
-        if (gardenersBuilt < 2) {
-            // Generate a random direction
+        // count how many gardeners are alive
+        int livingGardeners = channel.countLivingRobots(rc,GaScoutRush.robotType,3);
+        if (livingGardeners < 2) {
+            // try to build a gardener
             Direction dir = randomDirection();
-
-            // Randomly attempt to build a gardener in this direction
-            if (rc.canHireGardener(dir) && Math.random() < .01) {
+            if (rc.canHireGardener(dir)) {
                 rc.hireGardener(dir);
                 System.out.println("hiring gardener");
+            }
+
+            /* DEAD CODE, IGNORE
                 RobotInfo myInfo = getMyRobotInfo(rc);
+                // find my location, add the direction I built the gardener, get that robot's id
                 MapLocation myLoc = myInfo.getLocation();
                 float myRadius = myInfo.getRadius();
                 System.out.println("my info "+myInfo+" radius "+myRadius);
-                System.out.println("BROADCAST_MAX_CHANNELS "+GameConstants.BROADCAST_MAX_CHANNELS);
-
-
                 MapLocation gardenerLoc = myLoc.add(dir,myRadius + 0.5f); // .5 so we are in the child's radius
                 RobotInfo gardenerInfo = rc.senseRobotAtLocation(gardenerLoc);
                 System.out.println("sensed gardener " + gardenerInfo.getID());
-
-                // XXX broadcast to gardenerInfo.getID() telling it what chanel it should write on
-            }
+            */
         }
-
-        // XXX listen for the robots we've created to learn their status
-
         // Move randomly
         tryMove(randomDirection());
+
+        //channel.dbgChannels(rc);
     }
 
     public RobotInfo getMyRobotInfo(RobotController rc) throws GameActionException {
