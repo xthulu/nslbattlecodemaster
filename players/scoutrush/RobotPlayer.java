@@ -13,7 +13,7 @@ public strictfp class RobotPlayer {
                 ai = new ArComm(rc);
                 break;
             case GARDENER:
-                ai = new Gardener(rc);
+                ai = new GaScoutRush(rc);
                 break;
             case SOLDIER:
                 ai = new Soldier(rc);

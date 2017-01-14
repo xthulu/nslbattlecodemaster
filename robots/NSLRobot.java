@@ -1,6 +1,7 @@
 package nslbattlecodemaster.robots;
 
 import battlecode.common.*;
+import nslbattlecodemaster.util.CommChannel;
 
 /**
  * Created by morris on 1/11/17.

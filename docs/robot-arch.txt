@@ -6,10 +6,12 @@ breaking the project into separate files for the bots and players.
 This will let us develop without stepping on each others toes, and let
 us try out different AI strategies.
 
-In the src folder there is now an nsl folder which contains all of our
-stuff (and puts it in a nice nsl java package).
+In the src folder there is now a nslbattlecodemaster folder which
+contains all of our stuff (and puts it in a nice nslbattlecodemaster
+ java package).
 
-There are 4 subfolders in nsl - ai, players, robots, and util.
+There are 4 subfolders in nslbattlecodemaster - ai, players, robots,
+and util.
 
 ai - this is intended to contain componentized ai code in the future.
 For now it’s empty.  I’ll write more on it later.
@@ -46,8 +48,9 @@ define how the scoutrush player plays.
 Lets take a look at mitexample/RobotPlayer.java.
 
 First off, note that the package must match the filename and
-directory, so in this case it’s nsl.players.mitexample.  When I make
-scoutrush I will change it to nsl.players.scoutrush.
+directory, so in this case it’s nslbattlecodemaster.players.mitexample.
+When I make scoutrush I will change it to
+nslbattlecodemaster.players.scoutrush.
 
 The player code simply consists of a run() method.  This gets called
 by the game when a new robot is created.  The run() method's job is
