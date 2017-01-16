@@ -1,6 +1,6 @@
 package nslbattlecodemaster.util;
+
 import com.sun.xml.internal.bind.v2.model.core.ID;
-import nslbattlecodemaster.robots.Scout.*
 import battlecode.common.*;
 
 /**
@@ -8,7 +8,7 @@ import battlecode.common.*;
  * adding lockOn on 1/15/17 - ballantyne.
  */
 public class Util {
-        // all new alando stuff
+    // all new alando stuff
     public static void lockOn(RobotInfo targetInfo, RobotInfo attackerInfo, MapLocation myLocation) {
         // move so that (targetPosition - selfPosition) = (maxShootingRange - (maxTargetMovement/turn))
 
@@ -17,18 +17,28 @@ public class Util {
 
         float targStrideRadius = targetInfo.type.strideRadius;
         float distanceToTarget = targetLocation.distanceTo(myLocation);
-        float bulletRange =
+       /*
+       float bulletRange =
 
         while (true) {
-            if (distanceToTarget < ) {
+            if (distanceToTarget <) {
 
             }
 
 
-
         }
+        */
     }
 
+    public static RobotInfo containsArchon(RobotInfo[] bots) {
 
+        // If the list contains an ARCHON, return the Archon's RobotInfo, else return null
 
+        for (int i = 0; i < bots.length; i++) {
+            if (bots[i].getType() == RobotType.ARCHON) {
+                return bots[i];
+            }
+        }
+        return null;
+    }
 }

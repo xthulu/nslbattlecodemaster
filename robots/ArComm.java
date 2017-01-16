@@ -28,7 +28,22 @@ public strictfp class ArComm extends Archon {
         if (channel == null) {
             // since we are only going to read from it, we don't need to assign a channel
             channel = new CommChannel();
+
+            // XXX for development...
+            MapLocation[] locs = rc.getInitialArchonLocations(enemy);
+            for (MapLocation l : locs) {
+                System.out.println("enemy archon at "+l);
+            }
+            locs = rc.getInitialArchonLocations(rc.getTeam());
+            for (MapLocation l : locs) {
+                System.out.println("friendly archon at "+l);
+            }
         }
+
+        // log our budget
+        int currRnd = rc.getRoundNum();
+        if ((currRnd % 10) == 0)
+            System.out.println("round " + currRnd + " current bullet count "+rc.getTeamBullets());
 
         // count how many gardeners are alive
         int livingGardeners = channel.countLivingRobots(rc,GaScoutRush.robotType,3);
@@ -39,17 +54,6 @@ public strictfp class ArComm extends Archon {
                 rc.hireGardener(dir);
                 System.out.println("hiring gardener");
             }
-
-            /* DEAD CODE, IGNORE
-                RobotInfo myInfo = getMyRobotInfo(rc);
-                // find my location, add the direction I built the gardener, get that robot's id
-                MapLocation myLoc = myInfo.getLocation();
-                float myRadius = myInfo.getRadius();
-                System.out.println("my info "+myInfo+" radius "+myRadius);
-                MapLocation gardenerLoc = myLoc.add(dir,myRadius + 0.5f); // .5 so we are in the child's radius
-                RobotInfo gardenerInfo = rc.senseRobotAtLocation(gardenerLoc);
-                System.out.println("sensed gardener " + gardenerInfo.getID());
-            */
         }
         // Move randomly
         tryMove(randomDirection());

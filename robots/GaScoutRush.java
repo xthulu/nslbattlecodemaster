@@ -1,7 +1,7 @@
 package nslbattlecodemaster.robots;
 
 import battlecode.common.*;
-import nslbattlecodemaster.util.CommChannel;
+import nslbattlecodemaster.util.*;
 
 /**
  * Created by morris on 1/13/17.
@@ -9,7 +9,7 @@ import nslbattlecodemaster.util.CommChannel;
  * This Gardener only produces scouts, and it does it
  * as fast as possible.
  */
-public class GaScoutRush extends Gardener {
+public strictfp class GaScoutRush extends Gardener {
 
     public static final int robotType = 2;
 
@@ -28,9 +28,9 @@ public class GaScoutRush extends Gardener {
             channel.assignNewChannel(rc);
         }
 
-        // look for nearby bots
+        // look for nearby enemy bots
         RobotInfo[] enemyBots = rc.senseNearbyRobots(-1, enemy);
-        boolean enemyArchon = containsArchon(enemyBots);
+        RobotInfo enemyArchon = Util.containsArchon(enemyBots);
 
         // move
         if (enemyBots.length > 0) {
@@ -45,14 +45,6 @@ public class GaScoutRush extends Gardener {
         }
 
         // let the rest of the team know we are still alive
-        channel.writeChannelHeader(rc,robotType,enemyBots.length > 0,enemyArchon);
-    }
-
-    public boolean containsArchon(RobotInfo[] bots) {
-        for (int i = 0; i < bots.length; i++) {
-            if (bots[i].getType() == RobotType.ARCHON)
-                return true;
-        }
-        return false;
+        channel.writeChannelHeader(rc,robotType,enemyBots.length > 0,enemyArchon != null);
     }
 }
