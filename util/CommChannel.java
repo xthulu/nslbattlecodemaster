@@ -78,8 +78,7 @@ public class CommChannel {
 
         MapLocation myLoc = rc.getLocation();
         // GameConstants.MAP_MAX_HEIGHT = 1000 so we need to shift X far enough to leave room for y to be 1000
-        int integerLoc = ((int) myLoc.x) << 16;
-        integerLoc += (int) myLoc.y;
+        int integerLoc = packMapLocation(myLoc);
         rc.broadcast(myChannel + 3, integerLoc);
 
         int enemyFlags = 0;
@@ -102,8 +101,9 @@ public class CommChannel {
         roundSent = rc.readBroadcast(channel + 2);
 
         int integerLoc = rc.readBroadcast(channel + 3);
-        x = integerLoc >> 16;
-        y = integerLoc & 0xFFFF;
+        MapLocation loc = unpackMapLocation(integerLoc);
+        x = (int)loc.x;
+        y = (int)loc.y;
 
         int enemyFlags = rc.readBroadcast(channel + 4);
         senseEnemy = enemyFlags & 0x01;
@@ -112,6 +112,42 @@ public class CommChannel {
         //System.out.println("read Channel " + channel + " " + this);
 
         return true;
+    }
+
+    public int getChannelByRobotID(RobotController rc, int botID) throws GameActionException {
+
+        /* read through the channels until we find one claimed by robotID, if we find it return the channel,
+           and note that as a side effect we have read it's header.
+
+           if we don't find it return UNKNOWN_CHANNEL.
+         */
+        for (int i = 0; i < 70; i++) {
+            int channel = CHANNEL_BASE + (i * CHANNEL_SIZE);
+            readChannelHeader(rc,channel);
+            if (robotID == botID)
+                return channel;
+            if (robotID <= 0) // no more robots
+                break;
+        }
+        return UNKNOWN_CHANNEL; // couldn't find it
+    }
+
+    public int packMapLocation(MapLocation loc) {
+
+        /*  Given a map location (containing of 2 floating points x and y), pack x and y into
+            a single integer.  Note that only the int value is stored.
+         */
+        int integerLoc = ((int) loc.x) << 16;
+        integerLoc += (int) loc.y;
+        return integerLoc;
+    }
+
+    public MapLocation unpackMapLocation(int integerLoc) {
+
+        /*  Given an integer packed by packMapLocation, upack it and return the resulting MapLocation */
+        int x = integerLoc >> 16;
+        int y = integerLoc & 0xFFFF;
+        return new MapLocation(x,y);
     }
 
     public String toString() {

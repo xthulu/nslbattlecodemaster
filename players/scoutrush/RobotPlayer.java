@@ -22,7 +22,7 @@ public strictfp class RobotPlayer {
                 ai = new LumberJack(rc);
                 break;
             case SCOUT:
-                ai = new Scout(rc);
+                ai = new ScScoutRush(rc);
                 break;
             case TANK:
                 ai = new Tank(rc);
