@@ -1,7 +1,7 @@
 package nslbattlecodemaster.robots;
 
 import battlecode.common.*;
-import nslbattlecodemaster.util.Util;
+//import nslbattlecodemaster.util.Util;
 
 /**
  * Created by morris on 1/11/17.
@@ -14,12 +14,15 @@ public strictfp class Scout extends NSLRobot {
         name = "Scout";
     }
 
+    /*HWM commented out to make things compile
     @SuppressWarnings("unused")
     // new - alando
     RobotType selfData;
     // lots of new - alando
-    public void run() throws GameActionException {
+    */
 
+    public void run() throws GameActionException {
+/* HWM commented out to make things compile
         MapLocation myLocation = rc.getLocation();
 
         // See if there are any nearby enemy robots
@@ -49,5 +52,7 @@ public strictfp class Scout extends NSLRobot {
 
         // Move randomly
         tryMove(randomDirection());
+    */
     }
+
 }

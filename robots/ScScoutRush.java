@@ -6,7 +6,7 @@ import nslbattlecodemaster.util.*;
 import java.util.Map;
 
 /*  TODO
-    -bug why are there 4 scouts in a squadron instead of 3
+
     -need to broadcast location of enemy archons as we find them
     -when you are at your target location, and don't see any archons, head off to known locations, or start a search pattern
     -need more than 3 scouts to take down an archon
@@ -30,7 +30,7 @@ public strictfp class ScScoutRush extends Scout {
     public static final int SQUADRON_BASE = 2; // where we start writing in the global comm buffer
 
     public CommChannel channel;
-    public int squadronNum = 0; // 0 == unassigned
+    public int squadronNum = -1; // -1 == unassigned
     public int[] squadronMates; // their channels
     MapLocation target = null;
 
@@ -51,35 +51,44 @@ public strictfp class ScScoutRush extends Scout {
         }
 
         // assign myself to a squadron
-        if (squadronNum == 0) {
+        if (squadronNum == -1) {
             // first see if there is a squadron already mustering that I can join
             squadronNum = rc.readBroadcast(SQUADRON_BASE);
+            //System.out.println("p1 sn"+squadronNum);
             int i = 0;
             for (; i < SQUADRON_SIZE; i++) {
+                //System.out.println("p1.1 about to read matesChannel i"+i);
                 int matesChannel = rc.readBroadcast(SQUADRON_BASE + 1 + i);
+                //System.out.println("p1.2 read matesChannel i"+i +" mc"+matesChannel);
                 if (matesChannel == 0) {
                     // good an empty slot, put our channel here
+                    //System.out.println("p1.3 about to write matesChannel i"+i+" mych"+channel.myChannel);
                     rc.broadcast(SQUADRON_BASE + 1 + i, channel.myChannel);
+                    //System.out.println("p1.4 about to break i"+i);
                     break;
                 }
             }
+            //System.out.println("p2 sn"+squadronNum+" i"+i);
             if (i == SQUADRON_SIZE) {
                 // oops all the slots are taken for this squadron, We need to start a new squadron
                 squadronNum++;
                 rc.broadcast(SQUADRON_BASE, squadronNum); // increment the currently mustering squadron number
-                for (i = 0; i < SQUADRON_SIZE; i++) {
-                    // and zero out the new squadron's channels
+                rc.broadcast(SQUADRON_BASE + 1, channel.myChannel); // join the new squadron
+                for (i = 1; i < SQUADRON_SIZE; i++) {
+                    // and zero out the squadron's other channels so future guys can join us
                     rc.broadcast(SQUADRON_BASE + 1 + i, 0);
                 }
             }
+            //System.out.println("p3 sn"+squadronNum+" i"+i);
+
             // now that we have our squadron, lets get our squadron's target
-            MapLocation[] enemyArchons = rc.getInitialArchonLocations(enemy);
-            // choose which one to target based on the squadron number
-            int targetNo = squadronNum % enemyArchons.length;
-            target = enemyArchons[targetNo]; // get the target's location
+            target = getDefaultTarget(); // get the target's location
         }
+
         // see if I can find out anything about my squadron mates
         int currentlyMusteringSquadron = rc.readBroadcast(SQUADRON_BASE);
+        //System.out.println("p4 sn"+squadronNum+" cms"+currentlyMusteringSquadron);
+
         if (currentlyMusteringSquadron == squadronNum) {
             int i = 0;
             for (; i < SQUADRON_SIZE; i++) {
@@ -95,21 +104,26 @@ public strictfp class ScScoutRush extends Scout {
             }
         }
 
+        System.out.println(toString());
+
         // look for nearby enemy bots
         RobotInfo[] enemyBots = rc.senseNearbyRobots(-1, enemy);
         RobotInfo enemyArchon = Util.containsArchon(enemyBots);
 
+        // figure out what our next move is
         MapLocation loc;
         if (enemyArchon != null)
             loc = lockOn(enemyBots, enemyArchon);
-        if (mustering)
+        else if (mustering)
             loc = proceedToMusteringGrounds(enemyBots, enemyArchon);
         else
             loc = attackFormation(enemyBots, enemyArchon);
 
+        // try to make the move
         Direction dir = new Direction(rc.getLocation(), loc);
         tryMove(dir);
 
+        // find something to shoot at
         RobotInfo shootAt = chooseTargetToShoot(enemyBots, enemyArchon);
         if (shootAt != null) {
             if (rc.canFireSingleShot()) {
@@ -121,6 +135,18 @@ public strictfp class ScScoutRush extends Scout {
         channel.writeChannelHeader(rc, robotType, enemyBots.length > 0, enemyArchon != null);
         // and tell them my squadron number
         rc.broadcast(channel.myChannel + squadronNumPositionInChannel, squadronNum);
+    }
+
+    public MapLocation getDefaultTarget() {
+
+        /* the idea is to send sequential squadrons against different targets, this
+           may not be the best idea because one squadron probably isn't enough to
+           take out an archon.  XXX revisit this
+         */
+        MapLocation[] enemyArchons = rc.getInitialArchonLocations(enemy);
+        // choose which one to target based on the squadron number
+        int targetNo = squadronNum % enemyArchons.length;
+        return enemyArchons[targetNo]; // get the target's location
     }
 
     public MapLocation proceedToMusteringGrounds(RobotInfo[] enemyBots, RobotInfo enemyArchon) throws GameActionException {
@@ -162,5 +188,18 @@ public strictfp class ScScoutRush extends Scout {
             return enemyBots[0];
         else
             return null;
+    }
+
+    public String toString() {
+        String res = "ScScoutRush id: " + rc.getID() +
+                " channel " + channel.myChannel +
+                " squadronNum " + squadronNum +
+                " mustering " + mustering +
+                " target " + target +
+                " location " + rc.getLocation();
+        for (int i = 0; i < SQUADRON_SIZE; i++) {
+            res = res + " " + squadronMates[i];
+        }
+        return res;
     }
 }
