@@ -57,8 +57,6 @@ public strictfp class ArComm extends Archon {
         }
         // Move randomly
         tryMove(randomDirection());
-
-        //channel.dbgChannels(rc);
     }
 
     public RobotInfo getMyRobotInfo(RobotController rc) throws GameActionException {

@@ -37,13 +37,13 @@ public class CommChannel {
          */
 
         try {
-            // read the NEXT_CHANNEL_CHANNEL, it counts how many channels have
-            // been assigned, it's the base channel we will use to communicate
+            // read the NEXT_CHANNEL_CHANNEL, it counts how many channels have been assigned
             int nextChannel = rc.readBroadcast(NEXT_CHANNEL_CHANNEL);
-            myChannel = (nextChannel * CHANNEL_SIZE) + CHANNEL_BASE;
-            rc.broadcast(NEXT_CHANNEL_CHANNEL,nextChannel + 1);
+            myChannel = (nextChannel * CHANNEL_SIZE) + CHANNEL_BASE; // figure out our channel
+            rc.broadcast(NEXT_CHANNEL_CHANNEL,nextChannel + 1); // and increment NEXT_CHANNEL_CHANNEL
             //System.out.println("assigned new channel "+ myChannel);
-            // XXX check if BROADCAST_MAX_CHANNELS is hit
+            // XXX check if BROADCAST_MAX_CHANNELS is hit,
+            // XXX reuse channels claimed by dead bots
         } catch (Exception e) {
             System.out.println("assignNewChannel Exception");
             e.printStackTrace();
