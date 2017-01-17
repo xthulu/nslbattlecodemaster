@@ -3,13 +3,9 @@ package nslbattlecodemaster.robots;
 import battlecode.common.*;
 import nslbattlecodemaster.util.*;
 
-import java.util.Map;
-
 /*  TODO
 
-    -need to broadcast location of enemy archons as we find them
-    -when you are at your target location, and don't see any archons, head off to known locations, or start a search pattern
-    -need more than 3 scouts to take down an archon
+
  */
 
 /**
@@ -32,7 +28,7 @@ public strictfp class ScScoutRush extends Scout {
     public CommChannel channel;
     public int squadronNum = -1; // -1 == unassigned
     public int[] squadronMates; // their channels
-    MapLocation target = null;
+    MapLocation missionTarget = null;
 
     public boolean mustering = true; // false = launch attack
 
@@ -81,8 +77,8 @@ public strictfp class ScScoutRush extends Scout {
             }
             //System.out.println("p3 sn"+squadronNum+" i"+i);
 
-            // now that we have our squadron, lets get our squadron's target
-            target = getDefaultTarget(); // get the target's location
+            // now that we have our squadron, lets get our squadron's missionTarget
+            missionTarget = getDefaultTarget(); // get the missionTarget's location
         }
 
         // see if I can find out anything about my squadron mates
@@ -109,12 +105,12 @@ public strictfp class ScScoutRush extends Scout {
         // look for nearby enemy bots
         RobotInfo[] enemyBots = rc.senseNearbyRobots(-1, enemy);
         RobotInfo enemyArchon = Util.containsArchon(enemyBots);
+        // and update sightings
+        EnemyTracker.trackEnemies(rc,enemyBots);
 
         // figure out what our next move is
         MapLocation loc;
-        if (enemyArchon != null)
-            loc = lockOn(enemyBots, enemyArchon);
-        else if (mustering)
+        if (mustering)
             loc = proceedToMusteringGrounds(enemyBots, enemyArchon);
         else
             loc = attackFormation(enemyBots, enemyArchon);
@@ -144,9 +140,9 @@ public strictfp class ScScoutRush extends Scout {
            take out an archon.  XXX revisit this
          */
         MapLocation[] enemyArchons = rc.getInitialArchonLocations(enemy);
-        // choose which one to target based on the squadron number
+        // choose which one to missionTarget based on the squadron number
         int targetNo = squadronNum % enemyArchons.length;
-        return enemyArchons[targetNo]; // get the target's location
+        return enemyArchons[targetNo]; // get the missionTarget's location
     }
 
     public MapLocation proceedToMusteringGrounds(RobotInfo[] enemyBots, RobotInfo enemyArchon) throws GameActionException {
@@ -166,9 +162,9 @@ public strictfp class ScScoutRush extends Scout {
 
     public MapLocation attackFormation(RobotInfo[] enemyBots, RobotInfo enemyArchon) throws GameActionException {
 
-        /* head toward our squadron's target */
+        /* head toward our squadron's best target */
 
-        return target;
+        return EnemyTracker.getTargetLocation(missionTarget,rc.getLocation());
     }
 
     public MapLocation lockOn(RobotInfo[] enemyBots, RobotInfo enemyArchon) throws GameActionException {
@@ -180,22 +176,35 @@ public strictfp class ScScoutRush extends Scout {
 
     public RobotInfo chooseTargetToShoot(RobotInfo[] enemyBots, RobotInfo enemyArchon) throws GameActionException {
 
-        /* we see an enemy Archon, shoot it, otherwise shoot the nearest target */
+        /* we see an enemy Archon, shoot it, otherwise shoot the nearest gardener, otherwise the nearest robot */
+
+        // ZZZ might want to factor target range in here, shooting at a long distance target might be a waste
+
+        // look for a gardener
+        for (int i = 0; i < enemyBots.length; i++) {
+            if (enemyBots[i].getType() == RobotType.GARDENER) {
+                return enemyBots[i];
+            }
+        }
 
         if (enemyArchon != null)
             return enemyArchon;
-        else if (enemyBots.length > 0)
+
+        // look for nearest bot
+        if (enemyBots.length > 0)
             return enemyBots[0];
-        else
-            return null;
+
+        // no target
+        return null;
     }
 
     public String toString() {
         String res = "ScScoutRush id: " + rc.getID() +
+                " hp " + rc.getHealth() +
                 " channel " + channel.myChannel +
                 " squadronNum " + squadronNum +
                 " mustering " + mustering +
-                " target " + target +
+                " missionTarget " + missionTarget +
                 " location " + rc.getLocation();
         for (int i = 0; i < SQUADRON_SIZE; i++) {
             res = res + " " + squadronMates[i];

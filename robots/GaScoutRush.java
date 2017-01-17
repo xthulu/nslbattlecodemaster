@@ -31,10 +31,13 @@ public strictfp class GaScoutRush extends Gardener {
         // look for nearby enemy bots
         RobotInfo[] enemyBots = rc.senseNearbyRobots(-1, enemy);
         RobotInfo enemyArchon = Util.containsArchon(enemyBots);
+        // and update sightings
+        EnemyTracker.trackEnemies(rc,enemyBots);
 
         // move
         if (enemyBots.length > 0) {
             // XXX run away from enemy bots
+            tryMove(randomDirection());
         } else
             tryMove(randomDirection());
 

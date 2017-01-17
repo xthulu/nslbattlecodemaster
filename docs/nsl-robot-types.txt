@@ -1,0 +1,4 @@
+robot-type-number   class
+
+2                   GaScoutRush
+3                   ScScoutRush
