@@ -33,7 +33,8 @@ public abstract strictfp class NSLRobot {
     @SuppressWarnings("unused")
     public void start() throws GameActionException {
 
-        System.out.println(name + " starting");
+        System.out.println("----------------------");
+        System.out.println("starting " + name + " id " + rc.getID() + " loc " + rc.getLocation());
 
         while (true) {
 

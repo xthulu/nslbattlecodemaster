@@ -132,7 +132,7 @@ public class CommChannel {
         return UNKNOWN_CHANNEL; // couldn't find it
     }
 
-    public int packMapLocation(MapLocation loc) {
+    public static int packMapLocation(MapLocation loc) {
 
         /*  Given a map location (containing of 2 floating points x and y), pack x and y into
             a single integer.  Note that only the int value is stored.
@@ -142,7 +142,7 @@ public class CommChannel {
         return integerLoc;
     }
 
-    public MapLocation unpackMapLocation(int integerLoc) {
+    public static MapLocation unpackMapLocation(int integerLoc) {
 
         /*  Given an integer packed by packMapLocation, upack it and return the resulting MapLocation */
         int x = integerLoc >> 16;

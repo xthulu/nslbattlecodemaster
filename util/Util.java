@@ -1,6 +1,6 @@
 package nslbattlecodemaster.util;
 
-import com.sun.xml.internal.bind.v2.model.core.ID;
+//import com.sun.xml.internal.bind.v2.model.core.ID;
 import battlecode.common.*;
 
 /**
@@ -8,8 +8,10 @@ import battlecode.common.*;
  * adding lockOn on 1/15/17 - ballantyne.
  */
 public class Util {
+
+       /* HWM commented out so project will compile
     // all new alando stuff
-    public static void lockOn(RobotInfo targetInfo, RobotInfo attackerInfo, MapLocation myLocation) {
+    public static void lockOn(RobotInfo targetInfo, MapLocation myLocation) {
         // move so that (targetPosition - selfPosition) = (maxShootingRange - (maxTargetMovement/turn))
 
         int targetID = targetInfo.ID;
@@ -17,7 +19,7 @@ public class Util {
 
         float targStrideRadius = targetInfo.type.strideRadius;
         float distanceToTarget = targetLocation.distanceTo(myLocation);
-       /*
+
        float bulletRange =
 
         while (true) {
@@ -27,8 +29,9 @@ public class Util {
 
 
         }
-        */
+
     }
+        */
 
     public static RobotInfo containsArchon(RobotInfo[] bots) {
 
