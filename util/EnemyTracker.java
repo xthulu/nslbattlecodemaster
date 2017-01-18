@@ -120,7 +120,7 @@ public class EnemyTracker {
 
     public static MapLocation getSearchPattern(MapLocation currentLocation) {
 
-        System.out.println("in getSearchPattern");
+        //System.out.println("in getSearchPattern");
 
         /* move in a random direction a random longish distance, but make sure it is on the map */
 
