@@ -9,16 +9,18 @@ import battlecode.common.*;
  * <p>
  * For each type of enemy, we just keep track of the first one spotted this round.  We need 3 memory locations
  * for each enemy type - it's id, it's location, and the round it was last reported
+ *
+ * TODO
+ * -add third type of target that is anything, but store a 4th location which is the enemy type, this will
+ *  help when the enemy gardeners and archons are killed
  */
 public class EnemyTracker {
 
     public static final int TRACKER_BASE = 90; // we take up slots 90-95 in broadcast memory
 
-    public static final int MISSION_ABORT_RANGE = 6; // how close we can get to a location w/o seeing it before we give up
-
     public static int currRnd; // the current round
 
-    // the following are read from the memory
+    // the following are read from the shared robot memory
     public static int enemyArchonID;            // it's id
     public static int enemyArchonLoc;           // it's location as a packed MapLocation
     public static int enemyArchonRndSighted;    // when it was last sighted
@@ -97,7 +99,7 @@ public class EnemyTracker {
         rc.broadcast(TRACKER_BASE + i++, enemyGardenerRndSighted);
     }
 
-    public static MapLocation getTargetLocation(MapLocation missionTarget, MapLocation currentLocation) {
+    public static MapLocation getTargetLocation() {
 
         /* based on what we know, choose the best target */
 
@@ -113,12 +115,7 @@ public class EnemyTracker {
             return CommChannel.unpackMapLocation(enemyArchonLoc);
         }
 
-        if (currentLocation.distanceSquaredTo(missionTarget) < MISSION_ABORT_RANGE) {
-            return getSearchPattern(currentLocation);
-        }
-
-        // proceed toward mission target
-        return missionTarget;
+        return null;  // no good target
     }
 
     public static MapLocation getSearchPattern(MapLocation currentLocation) {
