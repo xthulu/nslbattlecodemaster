@@ -25,6 +25,8 @@ public strictfp class ScScoutRush extends Scout {
     public static final int SQUADRON_SIZE = 3; // number of scouts in a squadron
     public static final int SQUADRON_BASE = 2; // where we start writing in the global comm buffer
 
+    public static final int MISSION_ABORT_RANGE = 3; // how close we can get to a location w/o seeing it before we give up
+
     public CommChannel channel;
     public int squadronNum = -1; // -1 == unassigned
     public int[] squadronMates; // their channels
@@ -100,7 +102,7 @@ public strictfp class ScScoutRush extends Scout {
             }
         }
 
-        System.out.println(toString());
+        //System.out.println(toString());
 
         // look for nearby enemy bots
         RobotInfo[] enemyBots = rc.senseNearbyRobots(-1, enemy);
@@ -124,7 +126,7 @@ public strictfp class ScScoutRush extends Scout {
             boolean isOnMap;
             try {
                 isOnMap = rc.onTheMap(loc);
-                System.out.println("loc " + loc + " on map " + isOnMap);
+                //System.out.println("loc " + loc + " on map " + isOnMap);
             } catch (Exception e) {
                 // this happens when we are out of sensor range, in other words
                 // we don't know if it is on the map.  So, since it is too far
@@ -133,20 +135,20 @@ public strictfp class ScScoutRush extends Scout {
                 Direction dir = new Direction(rc.getLocation(), loc);
                 if (rc.canMove(dir)) {
                     isOnMap = true; // at least we can take one stride in that direction
-                    System.out.println("loc " + loc + " out of sensor range, but one stride in that direction is on map");
+                    //System.out.println("loc " + loc + " out of sensor range, but one stride in that direction is on map");
                 } else {
                     isOnMap = false; // nope, even one stride is off the map, get a new search pattern
-                    System.out.println("loc " + loc + " out of sensor range, and one stride in that direction is off map");
+                    //System.out.println("loc " + loc + " out of sensor range, and one stride in that direction is off map");
                 }
             }
             if (isOnMap) {
                 // try to make the move
                 Direction dir = new Direction(rc.getLocation(), loc);
                 tryMove(dir);
-                System.out.println("trying to move to loc " + loc + " location after moving " + rc.getLocation());
+                //System.out.println("trying to move to loc " + loc + " location after moving " + rc.getLocation());
             } else {
                 missionTarget = null; // get a new mission next turn
-                System.out.println("loc is off map, get a new missionTarget");
+                //System.out.println("loc is off map, get a new missionTarget");
                 tryMove(randomDirection()); // move randomly for now
             }
         }
@@ -193,7 +195,6 @@ public strictfp class ScScoutRush extends Scout {
     }
 
     public static final int LOCK_ON_RANGE = 3; // XXX maybe depends on other factors?
-    public static final int MISSION_ABORT_RANGE = 6; // how close we can get to a location w/o seeing it before we give up
 
     public boolean shouldLockOn(MapLocation ourLoc, MapLocation targetLoc) {
         /* return true if we are in loclon range */
@@ -211,13 +212,13 @@ public strictfp class ScScoutRush extends Scout {
         MapLocation target = EnemyTracker.getTargetLocation(); // ZZZ would be nice if it also returned the id
         MapLocation ourLocation = rc.getLocation();
 
-        System.out.println("q1 " + target + " ourloc " + ourLocation);
+        //System.out.println("q1 " + target + " ourloc " + ourLocation);
         if (target != null) {
             // we have a target, is it close enough to lock on
             if (shouldLockOn(ourLocation, target)) {
                 target = lockOn(ourLocation, target);
             }
-            System.out.println("q2 " + target + " ourloc " + ourLocation);
+            //System.out.println("q2 " + target + " ourloc " + ourLocation);
             return target;
         }
 
@@ -226,18 +227,18 @@ public strictfp class ScScoutRush extends Scout {
         if (missionTarget == null) {
             // we ran into the edge of the board pursuing our last mission target.  Get a new one
             missionTarget = EnemyTracker.getSearchPattern(ourLocation);
-            System.out.println("q3 " + missionTarget + " ourloc " + ourLocation);
+            //System.out.println("q3 " + missionTarget + " ourloc " + ourLocation);
         }
 
         if (ourLocation.distanceTo(missionTarget) < MISSION_ABORT_RANGE) {
             // we are within close range of our mission target, but we can't find a priority target,
             // that means it has moved or was already destroyed.  We need a new missionTarget
-            System.out.println("q4 " + missionTarget + " ourloc " + ourLocation);
+            //System.out.println("q4 " + missionTarget + " ourloc " + ourLocation);
             missionTarget = EnemyTracker.getSearchPattern(ourLocation);
-            System.out.println("q4.1 new target " + missionTarget + " ourloc " + ourLocation);
+            //System.out.println("q4.1 new target " + missionTarget + " ourloc " + ourLocation);
         }
 
-        System.out.println("q5 " + missionTarget + " ourloc " + ourLocation);
+        //System.out.println("q5 " + missionTarget + " ourloc " + ourLocation);
 
         // proceed toward mission target
         return missionTarget;
