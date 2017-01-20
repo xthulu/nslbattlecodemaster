@@ -137,7 +137,7 @@ public strictfp class ScScoutRush extends Scout {
                     isOnMap = true; // at least we can take one stride in that direction
                     //System.out.println("loc " + loc + " out of sensor range, but one stride in that direction is on map");
                 } else {
-                    isOnMap = false; // nope, even one stride is off the map, get a new search pattern
+                    isOnMap = false; // nope, even one stride is off the map, get a new mission target
                     //System.out.println("loc " + loc + " out of sensor range, and one stride in that direction is off map");
                 }
             }

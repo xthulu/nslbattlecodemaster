@@ -1,18 +1,21 @@
 position    purpose
 0           CommChannel.NEXT_CHANNEL_CHANNEL uses this to hand out channels
+
+------Scout Squadron Mustering
 2           ScScoutRush.SQUADRON_BASE uses this to define which squadron is currently mustering
 3           used by mustering squadron
 4           ...
 5           ... up to ScScoutRush.SQUADRON_BASE + ScScoutRush.SQUADRON_SIZE
 
-90          EnemyTracker.TRACKER_BASE
-91          enemy Archon id
-92          enemy Archon location
-93          enemy Archon last round reported
-94          as above for enemy Gardener
+------Enemy Tracker
+90          enemy Archon id
+91          enemy Archon location
+92          enemy Archon last round reported
+93          as above for enemy Gardener
+94          ...
 95          ...
-96          ...
 
+------Individual Robot's Comm Channels
 100-109     first robot's comm channel
 110-119     2nd robot's comm channel
 etc...
